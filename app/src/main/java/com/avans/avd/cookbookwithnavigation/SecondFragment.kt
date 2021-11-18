@@ -1,10 +1,9 @@
 package com.avans.avd.cookbookwithnavigation
 
 import android.os.Bundle
+import android.view.*
+import androidx.core.app.ShareCompat
 import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.fragment.navArgs
 import com.avans.avd.cookbookwithnavigation.databinding.FragmentSecondBinding
@@ -28,10 +27,34 @@ class SecondFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        setHasOptionsMenu(true)
 
         _binding = FragmentSecondBinding.inflate(inflater, container, false)
         return binding.root
+    }
 
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu_recipe_details, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
+            R.id.share -> shareSelectedRecipe()
+        }
+        return super.onOptionsItemSelected(item)
+    }
+
+    private fun shareSelectedRecipe() {
+        val recipe = recipes.find(args.recipe)
+
+        val shareByMailIntent = ShareCompat.IntentBuilder(requireContext())
+            .setType("text/plain")
+            .setSubject("My menu choice for today")
+            .setText("Hi, today I'm having this delicious meal for dinner: $recipe")
+            .intent
+
+        startActivity(shareByMailIntent)
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -42,7 +65,8 @@ class SecondFragment : Fragment() {
         }
 
         val recipe = recipes.find(args.recipe)
-        binding.textviewSecond.text = recipe?.toString() ?: "no recipe found with name ${args.recipe}"
+        binding.textviewSecond.text =
+            recipe?.toString() ?: "no recipe found with name ${args.recipe}"
     }
 
     override fun onDestroyView() {
