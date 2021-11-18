@@ -40,7 +40,9 @@ class FirstFragment : Fragment() {
         }
 
         binding.recipeDetailsBtn.setOnClickListener {
-            findNavController().navigate(R.id.action_FirstFragment_to_SecondFragment)
+            val recipe = binding.recipeSelectionSpn.selectedItem.toString()
+            val action = FirstFragmentDirections.actionFirstFragmentToSecondFragment(recipe)
+            findNavController().navigate(action)
         }
     }
 
